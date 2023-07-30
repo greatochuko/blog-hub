@@ -49,11 +49,19 @@ header ul li a.compose {
 
 main {
   flex: 1;
-  padding: 20px 20%;
+  padding: 20px 15%;
+}
+
+.blog-post {
+  margin: 20px 0;
 }
 
 .page-title {
   margin-bottom: 10px;
+}
+
+.post-title {
+  text-transform: capitalize;
 }
 
 .compose-form {
