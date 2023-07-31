@@ -30,11 +30,15 @@ app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/", async(req, res) => {
-    const posts = await Post.find();
-    res.render("index.ejs", {
-        homeStartingContent: homeStartingContent,
-        posts: posts,
-    });
+    try {
+        const posts = await Post.find();
+        res.render("index.ejs", {
+            homeStartingContent: homeStartingContent,
+            posts: posts,
+        });
+    } catch (error) {
+        console.log(error);
+    }
 });
 
 app.get("/about", (req, res) => {
