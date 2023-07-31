@@ -2,21 +2,35 @@ import express from "express";
 import bodyParser from "body-parser";
 import axios from "axios";
 import lodash from "lodash";
+import mongoose from "mongoose";
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 const _ = lodash;
 
 const homeStartingContent = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid consectetur optio cum exercitationem quas repellendus in, cumque reiciendis? Omnis vitae architecto rerum provident rem officiis voluptatum fugiat, debitis animi eius!"
 const aboutStartingContent = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid consectetur optio cum exercitationem quas repellendus in, cumque reiciendis? Omnis vitae architecto rerum provident rem officiis voluptatum fugiat, debitis animi eius!"
 const contactStartingContent = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid consectetur optio cum exercitationem quas repellendus in, cumque reiciendis? Omnis vitae architecto rerum provident rem officiis voluptatum fugiat, debitis animi eius!"
 
-let posts = [];
+try {
+    mongoose.connect("mongodb://127.0.0.1:27017/blogDB");
+    console.log("mongoose server connected successfully");
+} catch (error) {
+    console.log(error);
+}
+
+const postSchema = {
+    title: String,
+    content: String
+};
+
+const Post = mongoose.model("Post", postSchema);
 
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get("/", (req, res) => {
+app.get("/", async(req, res) => {
+    const posts = await Post.find();
     res.render("index.ejs", {
         homeStartingContent: homeStartingContent,
         posts: posts,
@@ -39,29 +53,24 @@ app.get("/compose", (req, res) => {
     res.render("compose.ejs");
 });
 
-app.get("/posts/:postTitle", (req, res) => {
-    const postTitle = _.lowerCase(req.params.postTitle);
-    let postIndex;
-
-    posts.forEach(post => {
-        if (_.lowerCase(post.title) === postTitle) {
-            console.log("Match found!");
-            postIndex = posts.indexOf(post);
-        }
-    })
-    console.log(postIndex);
-    const post = posts[postIndex];
-    res.render("post.ejs", {
-        post: post,
-    })
+app.get("/posts/:postID", async(req, res) => {
+    const postID = req.params.postID;
+    try {
+        const post = await Post.findById({ _id: postID });
+        res.render("post.ejs", {
+            post: post,
+        });
+    } catch (error) {
+        console.log(error);
+    }
 });
 
 app.post("/compose", (req, res) => {
-    const post = {
+    const post = new Post({
         title: req.body.blogTitle,
         content: req.body.blogContent
-    }
-    posts.push(post);
+    });
+    post.save();
     res.redirect("/");
 });
 
