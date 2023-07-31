@@ -13,7 +13,7 @@ const aboutStartingContent = "Lorem ipsum dolor sit amet consectetur adipisicing
 const contactStartingContent = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid consectetur optio cum exercitationem quas repellendus in, cumque reiciendis? Omnis vitae architecto rerum provident rem officiis voluptatum fugiat, debitis animi eius!"
 
 try {
-    mongoose.connect("mongodb://127.0.0.1:27017/blogDB");
+    mongoose.connect("mongodb+srv://greatochuko123:14122003@cluster0.0vhvc55.mongodb.net/blogDB");
     console.log("mongoose server connected successfully");
 } catch (error) {
     console.log(error);
